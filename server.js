@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
-const menuRoutes = require("./routes/menuRoutes");
+const blogRoutes = require("./routes/blogRoutes");
 require("dotenv").config();
 
 const app = express();
@@ -15,14 +15,14 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routes
 app.use("/api", authRoutes);
-app.use("/api", menuRoutes);
+app.use("/api", blogRoutes);
 
 app.get("/", (req, res) => {
     res.render("index");
 });
 
 app.get("/api", (req, res) => {
-    res.json({ message: "Välkommen till detta restaurang-API" })
+    res.json({ message: "Välkommen till detta API" })
 });
 
 //Starta applikation

@@ -12,70 +12,70 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
     console.error("Error vid anslutning till MongoDB: " + error)
 });
 
-//Menu-model
-const Menu = require("../models/menu");
+//Blog-model
+const Blog = require("../models/blog");
 
-//Hämta items från menyn
-router.get("/menu", async (req, res) => {
+//Hämta inlägg
+router.get("/blog", async (req, res) => {
     try {
-        // Hämta jobbdata från databasen
-        const menu = await Menu.find({});
+        // Hämta data från databasen
+        const blog = await Blog.find({});
 
-        // Skicka jobbdata tillbaka till klienten
-        res.json(menu);
+        // Skicka data tillbaka till klienten
+        res.json(blog);
     } catch (error) {
         // Hantera eventuella fel
-        console.error("Det uppstod ett fel vid hämtning av menyn:", error);
-        res.status(500).json({ message: "Det uppstod ett fel vid hämtning av menyn." });
+        console.error("Det uppstod ett fel vid hämtning av data:", error);
+        res.status(500).json({ message: "Det uppstod ett fel vid hämtning av data." });
     }
 });
 
-//Posta item till menyn
-router.post("/menu", authenticateToken, async (req, res) => {
+//Posta nytt inlägg
+router.post("/blog", authenticateToken, async (req, res) => {
     try {
-        const { name, type, description, price} = req.body;
+        const { title, text } = req.body;
 
         //Validera input
-        if (!name || !type || !description || !price) {
+        if (!title || !text) {
             return res.status(400).json({ error: "Ogiltig inmatning, vänligen fyll i alla fält" });
         }
 
-        //Korrekt input - Skapa nytt item på menyn
-        const newItem = new Menu({ name, type, description, price, });
+        //Korrekt input - Skapa nytt inlägg
+        const newItem = new Blog({ title, text });
         await newItem.save();
-        res.status(201).json({ message: "Nytt item tillagt på menyn" });
+        res.status(201).json({ message: "Nytt inlägg skapat" });
 
     } catch (error) {
         res.status(500).json({ error: "Server error" });
     }
 });
 
-//Ta bort item från menyn
-router.delete("/menu/:id", authenticateToken, async (req, res) => {
+//Ta bort inlägg
+router.delete("/blog/:id", authenticateToken, async (req, res) => {
     try {
         const itemId = req.params.id;
 
-        const result = await Menu.findByIdAndDelete(itemId);
+        const result = await Blog.findByIdAndDelete(itemId);
 
         return res.json(result);
     } catch (error) {
         //Errorhantering
-        return res.status(500).json({ message: "Det uppstod ett fel vid borttagning av item på menyn", error: error });
+        return res.status(500).json({ message: "Det uppstod ett fel vid borttagning av inlägg", error: error });
     }
 });
 
-//Uppdatera item på menyn
-router.put("/menu/:id", authenticateToken, async (req, res) => {
+//Uppdatera inlägg
+router.put("/blog/:id", authenticateToken, async (req, res) => {
     try {
         const itemId = req.params.id;
         const updatedItem = req.body;
 
-        const result = await Menu.findByIdAndUpdate(itemId, updatedItem, { new: true });
+        const result = await Blog.findByIdAndUpdate(itemId, updatedItem, { new: true });
 
         return res.json(result);
     } catch (error) {
         //Errorhantering
-        return res.status(500).json({ message: "Det uppstod ett fel vid uppdatering av item på menyn.", error: error });
+        return res.status(500).json({ message: "Det uppstod ett fel vid uppdatering av inlägg.", error: error });
     }
 });
 
