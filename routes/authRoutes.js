@@ -71,11 +71,15 @@ router.post("/login", async (req, res) => {
         } else {
             const payload = { username: username };
             const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "3h" });
-            const response = {
+
+            res.status(200).json({
                 message: "Inloggningen lyckades",
+                user: {
+                    _id: user._id,
+                    username: user.username
+                },
                 token: token
-            }
-            res.status(200).json({ response });
+            });
         }
     } catch (error) {
         res.status(500).json({ error: "Server error" });
