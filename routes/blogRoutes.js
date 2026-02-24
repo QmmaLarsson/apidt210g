@@ -30,6 +30,23 @@ router.get("/blog", async (req, res) => {
     }
 });
 
+//Hämta enskilt inlägg
+router.get("/blog/:id", async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const post = await Blog.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: "Inlägget hittades inte" });
+        }
+
+        res.json(post);
+    } catch (error) {
+        console.error("Fel vid hämtning av inlägget:", error);
+        res.status(500).json({ message: "Det uppstod ett fel vid hämtning av inlägget" });
+    }
+});
+
 //Posta nytt inlägg
 router.post("/blog", authenticateToken, async (req, res) => {
     try {
